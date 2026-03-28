@@ -21,3 +21,4 @@ app/build/
 /captures
 .externalNativeBuild
 .cxx
+keystore_b64.txt
