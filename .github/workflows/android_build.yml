@@ -2,8 +2,9 @@ name: Android Release Build
 
 on:
   push:
-    branches: [ "main", "master" ]
-  workflow_dispatch: # Позволяет запускать сборку кнопкой руками
+    tags:
+      - 'v*' # Запускать только если пушится тег, начинающийся на "v" (например, v1.0.0)
+  workflow_dispatch: # Позволяет запускать сборку кнопкой руками из интерфейса GitHub
 
 jobs:
   build:
@@ -28,7 +29,6 @@ jobs:
           ENCODED_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           echo $ENCODED_KEYSTORE | base64 -di > app/release.keystore
-          # Указываем путь для Gradle
           echo "STORE_FILE_PATH=release.keystore" >> $GITHUB_ENV
 
       - name: Build Release APK
