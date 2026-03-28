@@ -1,0 +1,23 @@
+# Учетные данные и ключи (КРИТИЧНО!)
+local.properties
+keystore.properties
+*.jks
+*.keystore
+
+# Сборка и кэш Gradle
+.gradle/
+build/
+app/build/
+*/build/
+.kotlin
+
+# IDE
+.idea/
+*.iml
+*.iws
+.DS_Store
+
+# Временные файлы
+/captures
+.externalNativeBuild
+.cxx
