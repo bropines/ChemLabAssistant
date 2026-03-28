@@ -1,8 +1,11 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
-    id("com.google.devtools.ksp") // Применяем KSP
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -19,19 +22,18 @@ android {
 
     // Читаем локальный файл с паролями (если он есть)
     val keystorePropertiesFile = rootProject.file("keystore.properties")
-    val keystoreProperties = java.util.Properties()
+    val keystoreProperties = Properties()
     if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
     signingConfigs {
         create("release") {
-            // Если собираем на GitHub Actions, берем пароли из переменных окружения,
-            // если локально — из файла keystore.properties
-            storeFile = file(System.getenv("STORE_FILE_PATH") ?: keystoreProperties["storeFile"] ?: "release.keystore")
-            storePassword = System.getenv("SIGNING_STORE_PASSWORD") ?: keystoreProperties["storePassword"] as String?
-            keyAlias = System.getenv("SIGNING_KEY_ALIAS") ?: keystoreProperties["keyAlias"] as String?
-            keyPassword = System.getenv("SIGNING_KEY_PASSWORD") ?: keystoreProperties["keyPassword"] as String?
+            // Используем getProperty(), он безопасно возвращает String?
+            storeFile = file(System.getenv("STORE_FILE_PATH") ?: keystoreProperties.getProperty("storeFile") ?: "release.keystore")
+            storePassword = System.getenv("SIGNING_STORE_PASSWORD") ?: keystoreProperties.getProperty("storePassword")
+            keyAlias = System.getenv("SIGNING_KEY_ALIAS") ?: keystoreProperties.getProperty("keyAlias")
+            keyPassword = System.getenv("SIGNING_KEY_PASSWORD") ?: keystoreProperties.getProperty("keyPassword")
         }
     }
 
@@ -75,7 +77,7 @@ dependencies {
     // Room & Gson
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion") // Для поддержки Coroutines (Flow)
+    implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("com.google.code.gson:gson:2.10.1")
 }
